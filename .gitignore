@@ -1,0 +1,8 @@
+# javac output for the jar
+build/
+
+# the zip and the copy of library/ inside it, rebuilt by tools/build_library.sh
+dist/
+
+# Processing's own output, if a sketch is ever built in place
+out/BMML-LEDGER.md

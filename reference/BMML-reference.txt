@@ -1,0 +1,118 @@
+BitMapMathLib (BMML) 1.0.0 - function reference
+https://github.com/MoonFingerRF/BitMapMathLib    MIT, (c) MoonFingerRF
+
+The canvas is 240 x 128: x right, y down, greys 0 (black) to 255 (white). Drawing uses the current
+stroke and fill, exactly as in Processing. `p` is how much of a curve is drawn, 0..1, so
+p = loopT(200) draws it on over 200 frames. `kind` and `tex` are strings, listed under the section
+they belong to.
+
+Two editions, one function list
+  DROP-IN     copy BitMapMathLib.pde into your sketch folder as a second tab. Nothing to import.
+  LIBRARY     install the zip (Sketch > Import Library... > Add Library, or unzip into the
+              Libraries folder), then
+                  import bmml.*;
+                  import static bmml.BMML.*;
+                  BMML bmml;
+                  void setup() { size(240, 128); bmml = new BMML(this); }
+              Before setup() has run, and before `bmml` exists, calls into the library fail.
+
+Your own functions
+  fy(x)  fr(a)  shade(x, y)   plot(), polarPlot(), polarShape() and shadeField() draw these.
+                              Define them in your sketch as usual; if one is missing the drawing
+                              that wants it does nothing instead of stopping the sketch.
+                              hasFunction("fy") tells you whether one is there.
+
+
+NUMBERS AND PLACES
+  PHI, GOLDEN_ANGLE, E, SQRT2      constants
+  CX, CY                           120, 64 - the centre of the canvas
+  xAt(a, b) = width * a / b        yAt(a, b) = height * a / b
+  phylloX(i, cx, spacing)          phylloY(i, cy, spacing)
+                                    seed i of a sunflower spiral, spacing apart
+
+TIME AND NOISE
+  ease(t)                          0..1, eased in and out
+  wave(period)                     0 to 1 and back, every `period` frames
+  loopT(period)                    0 to 1, repeating
+  clockT(seconds)                  the same, over seconds of the wall clock
+  timeNoise(x, y, speed)           noise drifting with time (speed about 1/500 to 1/50)
+  flowAngle(x, y, scale, speed)    a flow field's angle
+  cellRandom(i, j, seed)           a fixed random number 0..1 for a cell
+
+PLOTS
+  plot(x0, x1, y0, y1)             draws your fy(x) across the frame (y0 bottom, y1 top)
+  polarPlot(cx, cy, scale, turns)  draws your fr(a) as the radius fr(a) * scale
+  polarShape(cx, cy, scale)        the same, closed and filled
+  grid(step)                       polarGrid(cx, cy, rmax, rings, spokes)
+
+CURVES
+  lissajous(cx, cy, rx, ry, a, b, phase, p)
+  rose(cx, cy, r, k, p)
+  spiro(cx, cy, R, r, d, p)
+  spaceCurve(kind, x, y, w, h, order, p)      kind: hilbert zorder peano dragon koch gosper
+  LSystem t = new LSystem("F", "F=F[+F]F[-F]F", 25, 4);
+        axiom, rules, degrees, iterations;  t.draw(x, y, w, h, p) fits it to the box.
+        Rules are "A=... B=...", separated by spaces, commas or semicolons.
+        F and G draw, f moves, + and - turn, | turns around, [ and ] branch.
+
+POINT CLOUDS (they build up over frames)
+  Cloud c = new Cloud("fern");    also sierpinski carpet dragon lorenz clifford dejong
+  c.step(n)                       adds n points (500-3000)
+  c.draw(tex, scale)              inks them in a pattern
+  c.set(a, b, c, d)               the attractor's numbers
+  c.fit(x, y, w, h)               where it lands on the canvas
+  c.fade(keep)                    the share of last frame's points that stay, 0..1
+
+CELLS (drawn in the current fill)
+  Automaton a = new Automaton(30, 3);     rule 0-255, cell size in pixels
+  a.step(); a.draw(); a.set(i); a.fill(density);     fields: a.page, a.gap
+  Life g = new Life("B3/S23", 3);         g.step(); g.draw(); g.fill(density)
+  g.set(i, j, 1); g.get(i, j); g.clear();           fields: g.reseed, g.gap
+                                          Life restarts itself when it dies out or stalls
+  Fractal f = new Fractal("julia", -4 / 5.0, 1 / 6.0, 1);
+        "julia": c = (a, b);  "mandel": (a, b) is the centre;  zoom.
+  f.draw(rows, tex, scale)        draws the next rows (up to 12), shaded by escape time;
+                                  tex "bands" gives stripes instead of a pattern.
+                                  f.set(a, b) takes effect on the next pass. Never clears.
+
+GEOMETRY
+  voronoi(xs, ys, rings)          the cells of the points (float arrays, at most 64)
+                                  rings > 1 shades each cell toward its centre
+  delaunay(xs, ys)                lines between neighbouring points
+  Packing k = new Packing(x, y, w, h, rmin, rmax);
+        k.step(tries); k.draw(); k.clear(); k.full;
+        k.x[i], k.y[i], k.r[i] for i < k.n
+  truchet(x, y, w, h, cell, kind, t)          kind: arcs diag tri; tiles turn as t grows
+
+SHADING
+  pattern(kind, scale)            turns every grey pixel so far into the pattern
+  patternRect(kind, scale, x, y, w, h)         the same, inside one box (faster)
+  patternShift(dx, dy)            moves the patterns under the greys
+  kinds: flat stipple hatch cross lines vlines dots checker weave wavy;  scale 3-10
+  shadeField(cell)                fills the frame from your shade(x, y), 0..1 ink
+  fade(amount)                    washes toward white (30-120) instead of background(): trails
+
+WORDS
+  textCircle(s, cx, cy, r, start)     textWave(s, x, y, amp, phase)
+  textFit(s, x, y, w, h)              textGrid(s, x, y, w, h, size)
+
+COST: pattern, shadeField, c.draw and f.draw touch every pixel. Two of them a frame at most.
+
+
+HUB EXTENSIONS (not in stock Processing - see README.md)
+  The Nostalgia hub adds textures to Processing: a shape filled with a 1-bit pattern rather than a
+  flat grey. Stock Processing has none of this, so the drop-in edition approximates it:
+
+  texture(kind, scale)            the pattern the next filled shapes would use
+  strokeTexture(kind, scale)      the same for strokes
+  noTexture()  noStrokeTexture()  back to flat
+  textureSeed(seed)               seeds the tile
+  applyTexture()                  paints the texture() asked for over everything drawn so far
+  hasTexture()                    whether a texture() is waiting
+  background(g, kind[, scale])    a textured background
+  background(g1, g2, "vgradient") a vertical gradient
+
+  The hub tiles the texture inside each shape; the drop-in edition makes one pass over the whole
+  frame, so shapes drawn over one another come out differently. Call applyTexture() (or
+  pattern(kind, scale)) once at the end of draw(). Use these only if you need them: every other
+  function above is identical in both editions.
