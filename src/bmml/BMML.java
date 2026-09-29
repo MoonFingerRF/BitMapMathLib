@@ -90,8 +90,18 @@ public static float yAt(float a, float b) {
   return 128 * a / b;
 }
 
+public static int _clkSec = -1;
+public static int _clkMs = 0;
+
 public static float clockT(float seconds) {
-  return ((hour() * 3600 + minute() * 60 + second()) % seconds) / seconds;
+  int s = second();
+  if (s != _clkSec) {
+    _clkSec = s;
+    _clkMs = app.millis();
+  }
+  float frac = min(0.999f, (app.millis() - _clkMs) / 1000.0f);
+  float whole = (hour() * 3600 + minute() * 60 + s) % seconds;
+  return ((whole + frac) % seconds) / seconds;
 }
 
 public static float phylloX(int i, float cx, float spacing) {

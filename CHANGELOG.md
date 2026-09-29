@@ -3,6 +3,14 @@
 BitMapMathLib follows [semantic versioning](https://semver.org/): the function names, their
 arguments and what they draw are the interface.
 
+## Unreleased
+
+### Changed
+
+- `clockT(seconds)` now moves smoothly: it adds the fraction of the current second (from `millis()`)
+  to the wall-clock seconds, so a piece on `clockT(15)` glides instead of stepping once a second.
+  Still wall-clock aligned, still in [0, 1).
+
 ## 1.0.0
 
 First release. The drawing mathematics behind the Nostalgia art pieces, published on its own in two

@@ -63,8 +63,18 @@ float yAt(float a, float b) {
   return 128 * a / b;
 }
 
+int _clkSec = -1;
+int _clkMs = 0;
+
 float clockT(float seconds) {
-  return ((hour() * 3600 + minute() * 60 + second()) % seconds) / seconds;
+  int s = second();
+  if (s != _clkSec) {
+    _clkSec = s;
+    _clkMs = millis();
+  }
+  float frac = min(0.999, (millis() - _clkMs) / 1000.0);
+  float whole = (hour() * 3600 + minute() * 60 + s) % seconds;
+  return ((whole + frac) % seconds) / seconds;
 }
 
 float phylloX(int i, float cx, float spacing) {

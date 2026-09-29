@@ -34,7 +34,7 @@ TIME AND NOISE
   ease(t)                          0..1, eased in and out
   wave(period)                     0 to 1 and back, every `period` frames
   loopT(period)                    0 to 1, repeating
-  clockT(seconds)                  the same, over seconds of the wall clock
+  clockT(seconds)                  the same, over seconds of the wall clock; glides within a second
   timeNoise(x, y, speed)           noise drifting with time (speed about 1/500 to 1/50)
   flowAngle(x, y, scale, speed)    a flow field's angle
   cellRandom(i, j, seed)           a fixed random number 0..1 for a cell
